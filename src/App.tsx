@@ -1,26 +1,33 @@
-// frontend/src/App.tsx
-
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const App: React.FC = () => {
-  const [message, setMessage] = useState<string>('');
+  const [data, setData] = useState<{ id: number, testname: string, addr: string } | null>(null);
 
   useEffect(() => {
-    axios.get('http://localhost:8000/api/hello/')
+    axios.get('http://localhost:8000/api/test/')
       .then(response => {
-        setMessage(response.data.message);
+        setData(response.data);
       })
       .catch(error => {
-        console.error("There was an error fetching the message!", error);
+        console.error('There was an error fetching the data!', error);
       });
   }, []);
 
   return (
-    <div>
-      <h1>{message}</h1>
+    <div className="App">
+      <h1>Test Table Data</h1>
+      {data ? (
+        <div>
+          <p>ID: {data.id}</p>
+          <p>Test Name: {data.testname}</p>
+          <p>Address: {data.addr}</p>
+        </div>
+      ) : (
+        <p>Loading...</p>
+      )}
     </div>
   );
-};
+}
 
 export default App;
