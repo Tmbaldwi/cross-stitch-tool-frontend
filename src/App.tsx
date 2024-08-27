@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const App: React.FC = () => {
-  const [data, setData] = useState<{ id: number, testname: string, addr: string } | null>(null);
+  const [data, setData] = useState<Array<{ id: number, testname: string, addr: string }> | null>(null);
 
   useEffect(() => {
     axios.get('http://localhost:8000/api/test/')
@@ -18,16 +18,23 @@ const App: React.FC = () => {
     <div className="App">
       <h1>Test Table Data</h1>
       {data ? (
-        <div>
-          <p>ID: {data.id}</p>
-          <p>Test Name: {data.testname}</p>
-          <p>Address: {data.addr}</p>
-        </div>
+        <ul>
+          {data.map((item, index) => (
+            <li key={index}>
+              <div>
+                <p>ID: {item.id}</p>
+                <p>Test Name: {item.testname}</p>
+                <p>Address: {item.addr}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
       ) : (
         <p>Loading...</p>
       )}
     </div>
   );
+  
 }
 
 export default App;
