@@ -1,40 +1,56 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
+import ImportImageButton from './components/ImportImageButton';
 
 const App: React.FC = () => {
-  const [data, setData] = useState<Array<{ id: number, testname: string, addr: string }> | null>(null);
+  const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
 
-  useEffect(() => {
-    axios.get('http://localhost:8000/api/test/')
-      .then(response => {
-        setData(response.data);
-      })
-      .catch(error => {
-        console.error('There was an error fetching the data!', error);
-      });
-  }, []);
+  const handleImageSelect = (file: File) => {
+    const fileReader = new FileReader();
+    fileReader.onloadend = () => {
+      setImageSrc(fileReader.result as string);
+    };
+    fileReader.readAsDataURL(file);
+  }
 
   return (
-    <div className="App">
-      <h1>Test Table Data</h1>
-      {data ? (
-        <ul>
-          {data.map((item, index) => (
-            <li key={index}>
-              <div>
-                <p>ID: {item.id}</p>
-                <p>Test Name: {item.testname}</p>
-                <p>Address: {item.addr}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>Loading...</p>
-      )}
+    <div style={styles.screen}>
+      {!imageSrc &&
+      <div style={styles.importImageContainer}>
+        <h1>Select an Image :)</h1>
+        <ImportImageButton onImageSelect={handleImageSelect} />
+      </div>
+      }
+
+      {imageSrc && 
+      <div>
+        <img src={imageSrc} alt="Selected" style={styles.image}/>
+      </div>
+      }
+
     </div>
-  );
-  
+  );  
 }
+
+const styles: { [key: string]: React.CSSProperties } = {
+  screen: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100vh',
+  },
+  importImageContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  image: {
+    maxWidth: '90%',
+    maxHeight: '90%',
+    borderRadius: '8px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Adds a subtle shadow effect
+  },
+};
 
 export default App;
