@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { getTest } from '../services/testApiService';
+
+interface TestData {
+  id: number;
+  testname: string;
+  addr: string;
+}
 
 const FullStackTestComponent: React.FC = () => {
-  const [data, setData] = useState<Array<{ id: number, testname: string, addr: string }> | null>(null);
+  const [data, setData] = useState<TestData[] | null>(null);
 
   useEffect(() => {
-    axios.get('http://localhost:8000/api/test/')
-      .then(response => {
-        setData(response.data);
+    getTest()
+      .then(data => {
+        setData(data);
       })
       .catch(error => {
         console.error('There was an error fetching the data!', error);
