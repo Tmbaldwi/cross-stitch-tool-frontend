@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import ImportImageButton from './components/ImportImageButton';
 import { uploadImage } from './services/imageApiService';
-import FullStackTestComponent from './components/FullStackTestComponent';
 
 const App: React.FC = () => {
   const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
