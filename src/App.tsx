@@ -58,8 +58,6 @@ const styles: { [key: string]: React.CSSProperties } = {
   image: {
     maxWidth: '90%',
     maxHeight: '90%',
-    borderRadius: '8px',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Adds a subtle shadow effect
   },
 };
 
