@@ -25,7 +25,6 @@ const App: React.FC = () => {
 
   return (
     <div style={styles.screen}>
-      <FullStackTestComponent/>
       {!imageSrc &&
       <div style={styles.importImageContainer}>
         <h1>Select an Image :)</h1>
