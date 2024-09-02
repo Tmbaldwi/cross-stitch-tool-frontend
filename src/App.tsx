@@ -1,19 +1,31 @@
 import React, { useState } from 'react';
 import ImportImageButton from './components/ImportImageButton';
+import { uploadImage } from './services/imageApiService';
+import FullStackTestComponent from './components/FullStackTestComponent';
 
 const App: React.FC = () => {
   const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
 
   const handleImageSelect = (file: File) => {
-    const fileReader = new FileReader();
-    fileReader.onloadend = () => {
-      setImageSrc(fileReader.result as string);
-    };
-    fileReader.readAsDataURL(file);
+    
+    uploadImage(file)
+      .then(response => {
+        console.log(response)
+
+        const fileReader = new FileReader();
+        fileReader.onloadend = () => {
+          setImageSrc(fileReader.result as string);
+        };
+        fileReader.readAsDataURL(file);
+      })
+      .catch(error => {
+        console.error('There was an error uploading the image!', error);
+      });
   }
 
   return (
     <div style={styles.screen}>
+      <FullStackTestComponent/>
       {!imageSrc &&
       <div style={styles.importImageContainer}>
         <h1>Select an Image :)</h1>
