@@ -14,3 +14,9 @@ export const uploadImage = async (imageFile: File) => {
     
     return response.data;
 };
+
+export const getColorPalette = async () => {
+    const response = await axios.get(`${API_URL}palette/`);
+
+    return response.data;
+}
