@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ImportImageButton from './components/ImportImageButton';
 import { uploadImage, getColorPalette } from './services/imageApiService';
+import PaletteBox from './components/PaletteBox';
 
 const App: React.FC = () => {
   const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
@@ -17,6 +18,8 @@ const App: React.FC = () => {
           setImageSrc(fileReader.result as string);
         };
         fileReader.readAsDataURL(file);
+
+        handleGetPaletteRequest()
       })
       .catch(error => {
         console.error('There was an error uploading the image!', error);
@@ -35,77 +38,82 @@ const App: React.FC = () => {
       });
   }
 
-  const getPaletteColor = (boxColor : string) => {
-    return { backgroundColor: boxColor,
-              height: 25,
-              width: 25,
-              margin: 10,
-              border: '1px solid black'
-            };
-  };
-
   return (
-    <div style={styles.screen}>
-      {imageSrc && 
-      <div style={styles.imageContainer}>
-        <img src={imageSrc} alt="Selected" style={styles.image}/>
-      </div>
-      }
+    <div style={styles.fullScreen}>
+      <div style={styles.paletteScreen}>
 
-      <div style={styles.paletteContainer}>
-        {colorPalette?.map((item, index) => (
-          <div key={index}style={getPaletteColor(item)}/>
+        {colorPalette?.map((color, index) => (
+          <div key={index} style={styles.paletteBoxContainer}>
+            <PaletteBox paletteColor={color}/>
+          </div> 
         ))}
       </div>
 
-      <div style={styles.importImageButtonContainer}>
-        <ImportImageButton onImageSelect={handleImageSelect} />
-      </div>
-      {imageSrc &&
-      <button onClick={handleGetPaletteRequest}>
-          Get Color Palette
-      </button>
-      }
+      <div style={styles.imageScreen}>
+        {imageSrc && 
+        <div style={styles.imageContainer}>
+          <img src={imageSrc} alt="Selected" style={styles.image}/>
+        </div>
+        }
 
+        <div style={styles.importImageButtonContainer}>
+          <ImportImageButton onImageSelect={handleImageSelect} />
+        </div>
+
+      </div>
     </div>
   );  
 }
 
 const styles: { [key: string]: React.CSSProperties } = {
-  screen: {
+  fullScreen: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100vh',
+    width: '100vw'
+  },
+  paletteScreen:{
+    flex: 1,
+    display: 'flex',
+    flexWrap: 'wrap',
+    alignContent: 'flex-start',
+    border: '1px solid black',
+    height: '100vh',
+    width: '100vw',
+  },
+  paletteBoxContainer: {
+    padding: 10
+  },
+  imageScreen: {
+    flex: 3,
+    border: '1px solid black',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     height: '100vh',
+    width: '100vw'
   },
   importImageButtonContainer: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+    margin: 20
   },
   imageContainer: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+    border: '3px solid black',
   },
   image: {
     maxWidth: '90%',
     maxHeight: '90%',
   },
-  paletteContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  paletteColor: {
-    height: 25,
-    width: 25,
-    padding: 10,
-  }
 };
 
 export default App;
