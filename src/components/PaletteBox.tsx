@@ -47,13 +47,14 @@ const getColorOption = (boxColor : string) => {
               height: 25,
               width: 25,
               margin: 10,
-              border: '1px solid black'
+              border: '1px solid black',
             };
 };
 
 const getColorPalette = (boxColor: string ) => {
     return {
         flex: 1,
+        minWidth: 45,
         backgroundColor: boxColor,
         border: '1px solid black',
     };
@@ -63,10 +64,10 @@ const styles: { [key: string]: React.CSSProperties} = {
     topSectionContainer: {
         display: 'flex',
         flexDirection: 'row',
-        aspectRatio: 3/1
     },
     checkBoxContainer: {
-        flex: 1,
+        aspectRatio: 1,
+        height: 45,
         display: 'flex',
         border: '1px solid black',
         alignItems: 'center',
@@ -86,7 +87,7 @@ const styles: { [key: string]: React.CSSProperties} = {
         paddingRight: 10,
     },
     colorNameContainer: {
-
+        maxWidth: 135
     },
 }
 

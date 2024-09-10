@@ -6,19 +6,21 @@ import PaletteBox from './components/PaletteBox';
 const App: React.FC = () => {
   const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
   const [colorPalette, setColorPalette] = useState<string[] | undefined>(undefined);
+  const [colorPaletteLoading, setColorPaletteLoading] = useState<boolean>(false);
 
   const handleImageSelect = (file: File) => {
-    
     uploadImage(file)
       .then(response => {
         console.log(response)
 
+        // set image to screen
         const fileReader = new FileReader();
         fileReader.onloadend = () => {
           setImageSrc(fileReader.result as string);
         };
         fileReader.readAsDataURL(file);
 
+        // process palette
         handleGetPaletteRequest()
       })
       .catch(error => {
@@ -27,27 +29,51 @@ const App: React.FC = () => {
   }
 
   const handleGetPaletteRequest = () => {
+    setColorPaletteLoading(true);
+
+    // clear palette first
+    clearColorPalette();
+
+    // get & set palette
     getColorPalette()
       .then(response => {
         console.log(response)
-
         setColorPalette(response);
+
+        setColorPaletteLoading(false);
       })
       .catch(error => {
         console.error('There was an error getting the color palette', error);
+        setColorPaletteLoading(false);
       });
+  }
+
+  const clearColorPalette = () => {
+    setColorPalette(undefined);
   }
 
   return (
     <div style={styles.fullScreen}>
-      <div style={styles.paletteScreen}>
 
-        {colorPalette?.map((color, index) => (
-          <div key={index} style={styles.paletteBoxContainer}>
-            <PaletteBox paletteColor={color}/>
-          </div> 
-        ))}
+      { !colorPaletteLoading &&
+        <div style={styles.paletteScreen}>
+          <div style={styles.paletteScreenTitleContainer}>
+            Color Palette
+          </div>
+
+          {colorPalette?.map((color, index) => (
+            <div key={index} style={styles.paletteBoxContainer}>
+              <PaletteBox paletteColor={color}/>
+            </div> 
+          ))}
+        </div>
+      }
+
+      { colorPaletteLoading &&
+      <div style={styles.paletteLoadingScreen}>
+          <div>Loading...</div>
       </div>
+      }
 
       <div style={styles.imageScreen}>
         {imageSrc && 
@@ -79,7 +105,24 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: 'flex',
     flexWrap: 'wrap',
     alignContent: 'flex-start',
-    border: '1px solid black',
+    border: '2px solid black',
+    height: '100vh',
+    width: '100vw',
+  },
+  paletteScreenTitleContainer: {
+    width: '100%',
+    textAlign: 'center',
+    fontSize: 40,
+    fontWeight: 'bold',
+    padding: 10,
+    borderBottom: '2px solid black',
+  },
+  paletteLoadingScreen: {
+    flex: 1,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    border: '2px solid black',
     height: '100vh',
     width: '100vw',
   },
@@ -88,7 +131,6 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   imageScreen: {
     flex: 3,
-    border: '1px solid black',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
