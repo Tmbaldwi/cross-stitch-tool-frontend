@@ -4,9 +4,10 @@ import { MouseEvent } from 'react';
 interface PaletteBoxProps{
     paletteColor: string;
     swapColors(originalColor: string, newColor: string) : void
+    isSwapLoading: boolean;
 }
 
-const PaletteBox: React.FC<PaletteBoxProps> = ({ paletteColor, swapColors }) => {
+const PaletteBox: React.FC<PaletteBoxProps> = ({ paletteColor, swapColors, isSwapLoading }) => {
     const [colorOptions, setColorOptions] = useState<string[] | undefined>(["#cf0020", "#ffa878", "#542f0f", "#3f48cc", "#fff200"]);
     const [colorSelection, setColorSelection] = useState<string>(paletteColor);
     const [isChecked, setIsChecked] = useState(true);
@@ -16,9 +17,11 @@ const PaletteBox: React.FC<PaletteBoxProps> = ({ paletteColor, swapColors }) => 
     }
 
     const handleColorSelection = (e: MouseEvent, newColor: string): void => {
-        swapColors(paletteColor, newColor)
+        if(!isSwapLoading){
+            swapColors(paletteColor, newColor)
 
-        setColorSelection(newColor);
+            setColorSelection(newColor);
+        }
     }
 
     return(

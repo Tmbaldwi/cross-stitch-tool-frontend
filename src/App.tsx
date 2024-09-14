@@ -7,6 +7,7 @@ const App: React.FC = () => {
   const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
   const [colorPalette, setColorPalette] = useState<string[] | undefined>(undefined);
   const [colorPaletteLoading, setColorPaletteLoading] = useState<boolean>(false);
+  const [colorSwapLoading, setColorSwapLoading] = useState<boolean>(false);
 
   const fileReader = new FileReader();
   fileReader.onloadend = () => {
@@ -30,13 +31,17 @@ const App: React.FC = () => {
   }
 
   const swapColors = (originalColor: string, newColor : string) : void => {
+    setColorSwapLoading(true);
+
      swapColorsService(originalColor, newColor)
       .then(updatedImage => {
         // set image to screen
         fileReader.readAsDataURL(updatedImage);
+        setColorSwapLoading(false);
       })
       .catch(error => {
         console.error('There was an error swapping the colors', error);
+        setColorSwapLoading(false);
       });
     }
 
@@ -75,7 +80,11 @@ const App: React.FC = () => {
 
           {colorPalette?.map((color, index) => (
             <div key={index} style={styles.paletteBoxContainer}>
-              <PaletteBox paletteColor={color} swapColors={swapColors}/>
+              <PaletteBox 
+                paletteColor={color} 
+                swapColors={swapColors}
+                isSwapLoading={colorSwapLoading}
+              />
             </div> 
           ))}
         </div>
