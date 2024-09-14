@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ImportImageButton from './components/ImportImageButton';
-import { uploadImage, getColorPalette } from './services/imageApiService';
+import { uploadImage, getColorPalette, swapColorsService } from './services/imageApiService';
 import PaletteBox from './components/PaletteBox';
 
 const App: React.FC = () => {
@@ -8,25 +8,37 @@ const App: React.FC = () => {
   const [colorPalette, setColorPalette] = useState<string[] | undefined>(undefined);
   const [colorPaletteLoading, setColorPaletteLoading] = useState<boolean>(false);
 
+  const fileReader = new FileReader();
+  fileReader.onloadend = () => {
+    setImageSrc(fileReader.result as string);
+  };
+
   const handleImageSelect = (file: File) => {
     uploadImage(file)
       .then(response => {
-        console.log(response)
+        console.log(response);
 
         // set image to screen
-        const fileReader = new FileReader();
-        fileReader.onloadend = () => {
-          setImageSrc(fileReader.result as string);
-        };
         fileReader.readAsDataURL(file);
 
         // process palette
-        handleGetPaletteRequest()
+        handleGetPaletteRequest();
       })
       .catch(error => {
-        console.error('There was an error uploading the image!', error);
+        console.error('There was an error uploading the image', error);
       });
   }
+
+  const swapColors = (originalColor: string, newColor : string) : void => {
+     swapColorsService(originalColor, newColor)
+      .then(updatedImage => {
+        // set image to screen
+        fileReader.readAsDataURL(updatedImage);
+      })
+      .catch(error => {
+        console.error('There was an error swapping the colors', error);
+      });
+    }
 
   const handleGetPaletteRequest = () => {
     setColorPaletteLoading(true);
@@ -63,7 +75,7 @@ const App: React.FC = () => {
 
           {colorPalette?.map((color, index) => (
             <div key={index} style={styles.paletteBoxContainer}>
-              <PaletteBox paletteColor={color}/>
+              <PaletteBox paletteColor={color} swapColors={swapColors}/>
             </div> 
           ))}
         </div>

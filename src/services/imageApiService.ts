@@ -20,3 +20,18 @@ export const getColorPalette = async () => {
 
     return response.data;
 }
+
+export const swapColorsService = async (originalColor: string, newColor: string) => {
+    const payload = {
+        originalColor: originalColor,
+        newColor: newColor
+    }
+
+    const response = await axios.post(`${API_URL}swapColors/`, payload,
+        {
+            responseType: 'blob'
+        }
+    );
+
+    return response.data;
+}
