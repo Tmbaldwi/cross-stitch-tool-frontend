@@ -17,7 +17,7 @@ const PaletteBox: React.FC<PaletteBoxProps> = ({ paletteColor, swapColors, isSwa
     }
 
     const handleColorSelection = (e: MouseEvent, newColor: string): void => {
-        if(!isSwapLoading){
+        if(!isSwapLoading && colorSelection != newColor){
             swapColors(paletteColor, newColor)
 
             setColorSelection(newColor);
@@ -35,13 +35,18 @@ const PaletteBox: React.FC<PaletteBoxProps> = ({ paletteColor, swapColors, isSwa
                         style={styles.checkBox}
                     />
                 </div>
-                <div style={getColorPalette(paletteColor)}/>
+                <div style={getColorPalette(paletteColor)}
+                    onClick={(event: MouseEvent) => handleColorSelection(event, paletteColor)}
+                />
                 <div style={getColorPalette(colorSelection)}/>
             </div>
             <div style={styles.bottomSectionContainer}>
 
             {colorOptions?.map((color, index) => (
-                <div key={index} style={styles.colorOptionContainer} onClick={(event: MouseEvent) => handleColorSelection(event, color)}>
+                <div key={index} 
+                    style={styles.colorOptionContainer} 
+                    onClick={(event: MouseEvent) => handleColorSelection(event, color)}
+                >
                     <div style={getColorOption(color)}/>
                     <div style={styles.colorNameContainer}>
                         {color}
