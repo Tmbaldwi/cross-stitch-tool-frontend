@@ -1,16 +1,27 @@
 import React, { useState } from 'react';
+import { MouseEvent } from 'react';
 
 interface PaletteBoxProps{
     paletteColor: string;
+    swapColors(originalColor: string, newColor: string) : void
+    isSwapLoading: boolean;
 }
 
-const PaletteBox: React.FC<PaletteBoxProps> = ({ paletteColor }) => {
+const PaletteBox: React.FC<PaletteBoxProps> = ({ paletteColor, swapColors, isSwapLoading }) => {
     const [colorOptions, setColorOptions] = useState<string[] | undefined>(["#cf0020", "#ffa878", "#542f0f", "#3f48cc", "#fff200"]);
-    const [colorSelection, setColorSelection] = useState<string>("#00ff44");
+    const [colorSelection, setColorSelection] = useState<string>(paletteColor);
     const [isChecked, setIsChecked] = useState(true);
 
-    const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setIsChecked(event.target.checked);
+    }
+
+    const handleColorSelection = (e: MouseEvent, newColor: string): void => {
+        if(!isSwapLoading){
+            swapColors(paletteColor, newColor)
+
+            setColorSelection(newColor);
+        }
     }
 
     return(
@@ -30,7 +41,7 @@ const PaletteBox: React.FC<PaletteBoxProps> = ({ paletteColor }) => {
             <div style={styles.bottomSectionContainer}>
 
             {colorOptions?.map((color, index) => (
-                <div key={index} style={styles.colorOptionContainer}>
+                <div key={index} style={styles.colorOptionContainer} onClick={(event: MouseEvent) => handleColorSelection(event, color)}>
                     <div style={getColorOption(color)}/>
                     <div style={styles.colorNameContainer}>
                         {color}
@@ -51,7 +62,7 @@ const getColorOption = (boxColor : string) => {
             };
 };
 
-const getColorPalette = (boxColor: string ) => {
+const getColorPalette = (boxColor: string) => {
     return {
         flex: 1,
         minWidth: 45,
