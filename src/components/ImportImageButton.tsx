@@ -19,7 +19,7 @@ const ImportImageButton: React.FC<ImportImageButtonProps> = ({ onImageSelect }) 
     };
 
     return (
-        <div>
+        <div style={styles.importButton}>
             <button onClick={handleClick} style={styles.button}>
                 Upload Image
             </button>
@@ -35,6 +35,9 @@ const ImportImageButton: React.FC<ImportImageButtonProps> = ({ onImageSelect }) 
 };
 
 const styles: { [key: string]: React.CSSProperties } = {
+    importButton: {
+        margin: 10,
+    },
     button: {
       padding: '10px 20px',
       backgroundColor: '#007bff',
