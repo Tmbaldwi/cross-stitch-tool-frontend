@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import ImportImageButton from './components/ImportImageButton';
-import { uploadImage, getColorPalette, swapColorsService } from './services/imageApiService';
+import { uploadImage, getColorPalette, swapColorsService, resetImage } from './services/imageApiService';
 import PaletteBox from './components/PaletteBox';
+import ResetImageButton from './components/ResetImageButton';
 
 const App: React.FC = () => {
   const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
@@ -69,6 +70,17 @@ const App: React.FC = () => {
     setColorPalette(undefined);
   }
 
+  const handleResetClick = () => {
+    resetImage()
+    .then(updatedImage => {
+      // set image to screen
+      fileReader.readAsDataURL(updatedImage);
+    })
+    .catch(error => {
+      console.error('There was an error resetting the image', error);
+    });
+  }
+
   return (
     <div style={styles.fullScreen}>
 
@@ -103,8 +115,12 @@ const App: React.FC = () => {
         </div>
         }
 
-        <div style={styles.importImageButtonContainer}>
+        <div style={styles.buttonContainer}>
           <ImportImageButton onImageSelect={handleImageSelect} />
+          { imageSrc &&
+          <ResetImageButton onResetClick={handleResetClick} />
+          }
+
         </div>
 
       </div>
@@ -159,12 +175,12 @@ const styles: { [key: string]: React.CSSProperties } = {
     height: '100vh',
     width: '100vw'
   },
-  importImageButtonContainer: {
+  buttonContainer: {
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 20
+    margin: 20,
   },
   imageContainer: {
     display: 'flex',

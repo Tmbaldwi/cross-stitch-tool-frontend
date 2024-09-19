@@ -35,3 +35,13 @@ export const swapColorsService = async (originalColor: string, newColor: string)
 
     return response.data;
 }
+
+export const resetImage = async () => {
+    const response = await axios.post(`${API_URL}reset/`, {},
+        {
+            responseType: 'blob'
+        }
+    );
+
+    return response.data;
+}
