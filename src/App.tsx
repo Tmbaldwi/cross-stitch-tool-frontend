@@ -1,18 +1,27 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from './redux/store';
+import { setImageSrc } from './redux/slices/imageSlice';
+import { setColorPalette, resetAllColorSelections } from './redux/slices/colorSlice';
 import ImportImageButton from './components/ImportImageButton';
 import { uploadImage, getColorPalette, swapColorsService, resetImage } from './services/imageApiService';
 import PaletteBox from './components/PaletteBox';
 import ResetImageButton from './components/ResetImageButton';
 
 const App: React.FC = () => {
-  const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
-  const [colorPalette, setColorPalette] = useState<string[] | undefined>(undefined);
+  const dispatch = useDispatch();
+
+  // global state vars
+  const { imageSrc } = useSelector((state: RootState) => state.image);
+  const { colorPalette } = useSelector((state: RootState) => state.color);
+
+  // local vars
   const [colorPaletteLoading, setColorPaletteLoading] = useState<boolean>(false);
   const [colorSwapLoading, setColorSwapLoading] = useState<boolean>(false);
 
   const fileReader = new FileReader();
   fileReader.onloadend = () => {
-    setImageSrc(fileReader.result as string);
+    dispatch(setImageSrc(fileReader.result as string));
   };
 
   const handleImageSelect = (file: File) => {
@@ -56,7 +65,7 @@ const App: React.FC = () => {
     getColorPalette()
       .then(response => {
         console.log(response)
-        setColorPalette(response);
+        dispatch(setColorPalette(response));
 
         setColorPaletteLoading(false);
       })
@@ -67,12 +76,15 @@ const App: React.FC = () => {
   }
 
   const clearColorPalette = () => {
-    setColorPalette(undefined);
+    dispatch(setColorPalette([]));
   }
 
   const handleResetClick = () => {
     resetImage()
     .then(updatedImage => {
+      // reset color selections
+      dispatch(resetAllColorSelections());
+
       // set image to screen
       fileReader.readAsDataURL(updatedImage);
     })

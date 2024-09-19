@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { MouseEvent } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import { setColorSelection } from '../redux/slices/colorSlice';
 
 interface PaletteBoxProps{
     paletteColor: string;
@@ -8,8 +11,15 @@ interface PaletteBoxProps{
 }
 
 const PaletteBox: React.FC<PaletteBoxProps> = ({ paletteColor, swapColors, isSwapLoading }) => {
-    const [colorOptions, setColorOptions] = useState<string[] | undefined>(["#cf0020", "#ffa878", "#542f0f", "#3f48cc", "#fff200"]);
-    const [colorSelection, setColorSelection] = useState<string>(paletteColor);
+    const dispatch = useDispatch();
+
+    // global state vars
+    const { colorOptions: colorOptionsDict } = useSelector((state: RootState) => state.color);
+    const colorOptions: string[] = colorOptionsDict[paletteColor];
+    const { colorSelection: colorSelectionDict } = useSelector((state: RootState) => state.color);
+    const colorSelection: string = colorSelectionDict[paletteColor];
+
+    // local state vars
     const [isChecked, setIsChecked] = useState(true);
 
     const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -20,7 +30,7 @@ const PaletteBox: React.FC<PaletteBoxProps> = ({ paletteColor, swapColors, isSwa
         if(!isSwapLoading && colorSelection != newColor){
             swapColors(paletteColor, newColor)
 
-            setColorSelection(newColor);
+            dispatch(setColorSelection({paletteColor, newSelection: newColor}));
         }
     }
 
