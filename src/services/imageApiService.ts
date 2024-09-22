@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { ColorPaletteResponse } from '../models/PaletteModels'
 
 const API_URL = 'http://localhost:8000/api/image/';
 
@@ -18,7 +19,11 @@ export const uploadImage = async (imageFile: File) => {
 export const getColorPalette = async () => {
     const response = await axios.get(`${API_URL}palette/`);
 
-    return response.data;
+    console.log(response.data)
+
+    const { color_palette, color_palette_details }: ColorPaletteResponse = response.data;
+
+    return {color_palette, color_palette_details};
 }
 
 export const swapColorsService = async (originalColor: string, newColor: string) => {

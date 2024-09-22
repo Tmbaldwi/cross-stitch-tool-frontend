@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './redux/store';
 import { setImageSrc } from './redux/slices/imageSlice';
-import { setColorPalette, resetAllColorSelections } from './redux/slices/colorSlice';
+import { setColorPalette, setColorOptions, resetAllColorSelections } from './redux/slices/colorSlice';
 import ImportImageButton from './components/ImportImageButton';
 import { uploadImage, getColorPalette, swapColorsService, resetImage } from './services/imageApiService';
 import PaletteBox from './components/PaletteBox';
 import ResetImageButton from './components/ResetImageButton';
+import { Palette } from './models/PaletteModels';
+import { parsePaletteDetails } from './models/PaletteModels';
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
@@ -65,7 +67,12 @@ const App: React.FC = () => {
     getColorPalette()
       .then(response => {
         console.log(response)
-        dispatch(setColorPalette(response));
+        dispatch(setColorPalette(response.color_palette));
+
+        const details : Palette[] = parsePaletteDetails(response.color_palette_details);
+        details.forEach((palette) => {
+          dispatch(setColorOptions(palette))
+        })
 
         setColorPaletteLoading(false);
       })
