@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Palette, ColorOption } from '../../models/PaletteModels';
 
 interface ColorState {
     colorPalette: string[];
-    colorOptions: { [key: string]: string[]};
+    colorOptions: { [key: string]: ColorOption[]};
     colorSelection: { [key: string]: string};
 }
 
@@ -27,8 +28,13 @@ const colorSlice = createSlice({
                 state.colorSelection[color] = color;
 
                 // add to color options
-                state.colorOptions[color] = ["#43A5BE", "#F5C26B", "#4FB06D", "#F07857", "#BF2C34"]; //TODO remove eventually
+                //state.colorOptions[color] = ["#43A5BE", "#F5C26B", "#4FB06D", "#F07857", "#BF2C34"]; //TODO remove eventually
             });
+        },
+        setColorOptions: (state, action: PayloadAction<Palette>) => {
+            const palette: Palette = action.payload;
+
+            state.colorOptions[palette.originalColor] = palette.colorOptions;
         },
         setColorSelection: (state, action: PayloadAction<{ paletteColor: string; newSelection: string}>) => {
             const {paletteColor, newSelection} = action.payload;
@@ -40,9 +46,9 @@ const colorSlice = createSlice({
             state.colorPalette.forEach((color) => {
                 state.colorSelection[color] = color;
             })
-        }
+        },
     }
 })
 
-export const { setColorPalette, setColorSelection, resetAllColorSelections } = colorSlice.actions;
+export const { setColorPalette, setColorOptions, setColorSelection, resetAllColorSelections } = colorSlice.actions;
 export default colorSlice.reducer;

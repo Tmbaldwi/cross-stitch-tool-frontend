@@ -3,6 +3,7 @@ import { MouseEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { setColorSelection } from '../redux/slices/colorSlice';
+import { ColorOption } from '../models/PaletteModels';
 
 interface PaletteBoxProps{
     paletteColor: string;
@@ -15,7 +16,7 @@ const PaletteBox: React.FC<PaletteBoxProps> = ({ paletteColor, swapColors, isSwa
 
     // global state vars
     const { colorOptions: colorOptionsDict } = useSelector((state: RootState) => state.color);
-    const colorOptions: string[] = colorOptionsDict[paletteColor];
+    const colorOptions: ColorOption[] = colorOptionsDict[paletteColor];
     const { colorSelection: colorSelectionDict } = useSelector((state: RootState) => state.color);
     const colorSelection: string = colorSelectionDict[paletteColor];
 
@@ -27,7 +28,7 @@ const PaletteBox: React.FC<PaletteBoxProps> = ({ paletteColor, swapColors, isSwa
     }
 
     const handleColorSelection = (e: MouseEvent, newColor: string): void => {
-        if(!isSwapLoading && colorSelection != newColor){
+        if(!isSwapLoading && colorSelection !== newColor){
             swapColors(paletteColor, newColor)
 
             dispatch(setColorSelection({paletteColor, newSelection: newColor}));
@@ -55,11 +56,11 @@ const PaletteBox: React.FC<PaletteBoxProps> = ({ paletteColor, swapColors, isSwa
             {colorOptions?.map((color, index) => (
                 <div key={index} 
                     style={styles.colorOptionContainer} 
-                    onClick={(event: MouseEvent) => handleColorSelection(event, color)}
+                    onClick={(event: MouseEvent) => handleColorSelection(event, color.hexValue)}
                 >
-                    <div style={getColorOption(color)}/>
+                    <div style={getColorOption(color.hexValue)}/>
                     <div style={styles.colorNameContainer}>
-                        {color}
+                        {color.name}
                     </div>
                 </div>
                 ))}
