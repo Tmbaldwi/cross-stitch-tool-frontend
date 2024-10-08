@@ -28,11 +28,11 @@ const App: React.FC = () => {
 
   const handleImageSelect = (file: File) => {
     uploadImage(file)
-      .then(response => {
-        console.log(response);
+      .then(image => {
+        console.log("Image Recieved");
 
         // set image to screen
-        fileReader.readAsDataURL(file);
+        fileReader.readAsDataURL(image);
 
         // process palette
         handleGetPaletteRequest();
@@ -130,7 +130,7 @@ const App: React.FC = () => {
       <div style={styles.imageScreen}>
         {imageSrc && 
         <div style={styles.imageContainer}>
-          <img src={imageSrc} alt="Selected" style={styles.image}/>
+          <img src={imageSrc} alt="Pixel Art" style={styles.image}/>
         </div>
         }
 
@@ -207,10 +207,14 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignItems: 'center',
     justifyContent: 'center',
     border: '3px solid black',
+    width: '80%',
+    height: '80%',
+    backgroundColor: 'lightgrey'
   },
   image: {
-    maxWidth: '90%',
-    maxHeight: '90%',
+    height: '100%',
+    width: 'auto',
+    imageRendering: 'pixelated',
   },
 };
 
