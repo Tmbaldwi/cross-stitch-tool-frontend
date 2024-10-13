@@ -3,7 +3,7 @@ import { ColorPaletteResponse } from '../models/PaletteModels'
 
 const API_URL = 'http://localhost:8000/api/image/';
 
-export const uploadImage = async (imageFile: File): Promise<Blob> => {
+export const uploadImage = async (imageFile: File): Promise<string> => {
     const payload = new FormData();
     payload.append('file', imageFile);
     
@@ -11,43 +11,34 @@ export const uploadImage = async (imageFile: File): Promise<Blob> => {
         headers: {
             'Content-Type': 'multipart/form-data'
         },
-        responseType: 'blob'
     });
+
+    console.log(response.data)
     
-    return response.data;
+    return response.data.image;
 };
 
 export const getColorPalette = async (): Promise<ColorPaletteResponse> => {
     const response = await axios.get(`${API_URL}palette/`);
-
-    console.log(response.data)
 
     const { color_palette, color_palette_details }: ColorPaletteResponse = response.data;
 
     return {color_palette, color_palette_details};
 }
 
-export const swapColorsService = async (originalColor: string, newColor: string): Promise<Blob> => {
+export const swapColorsService = async (originalColor: string, newColor: string): Promise<string> => {
     const payload = {
         originalColor: originalColor,
         newColor: newColor
     }
 
-    const response = await axios.post(`${API_URL}swapColors/`, payload,
-        {
-            responseType: 'blob'
-        }
-    );
+    const response = await axios.post(`${API_URL}swapColors/`, payload);
 
-    return response.data;
+    return response.data.image;
 }
 
-export const resetImage = async (): Promise<Blob> => {
-    const response = await axios.post(`${API_URL}reset/`, {},
-        {
-            responseType: 'blob'
-        }
-    );
+export const resetImage = async (): Promise<string> => {
+    const response = await axios.post(`${API_URL}reset/`);
 
-    return response.data;
+    return response.data.image;
 }

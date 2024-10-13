@@ -21,18 +21,13 @@ const App: React.FC = () => {
   const [colorPaletteLoading, setColorPaletteLoading] = useState<boolean>(false);
   const [colorSwapLoading, setColorSwapLoading] = useState<boolean>(false);
 
-  const fileReader = new FileReader();
-  fileReader.onloadend = () => {
-    dispatch(setImageSrc(fileReader.result as string));
-  };
-
   const handleImageSelect = (file: File) => {
     uploadImage(file)
       .then(image => {
         console.log("Image Recieved");
 
         // set image to screen
-        fileReader.readAsDataURL(image);
+        dispatch(setImageSrc(image));
 
         // process palette
         handleGetPaletteRequest();
@@ -48,7 +43,8 @@ const App: React.FC = () => {
      swapColorsService(originalColor, newColor)
       .then(updatedImage => {
         // set image to screen
-        fileReader.readAsDataURL(updatedImage);
+        dispatch(setImageSrc(updatedImage));
+
         setColorSwapLoading(false);
       })
       .catch(error => {
@@ -93,7 +89,7 @@ const App: React.FC = () => {
       dispatch(resetAllColorSelections());
 
       // set image to screen
-      fileReader.readAsDataURL(updatedImage);
+      dispatch(setImageSrc(updatedImage));
     })
     .catch(error => {
       console.error('There was an error resetting the image', error);
@@ -130,7 +126,7 @@ const App: React.FC = () => {
       <div style={styles.imageScreen}>
         {imageSrc && 
         <div style={styles.imageContainer}>
-          <img src={imageSrc} alt="Pixel Art" style={styles.image}/>
+          <img src={`data:image/jpeg;base64,${imageSrc}`} alt="Pixel Art" style={styles.image}/>
         </div>
         }
 
