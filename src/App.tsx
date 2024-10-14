@@ -9,6 +9,7 @@ import PaletteBox from './components/PaletteBox';
 import ResetImageButton from './components/ResetImageButton';
 import { Palette } from './models/PaletteModels';
 import { parsePaletteDetails } from './models/PaletteModels';
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
@@ -22,6 +23,8 @@ const App: React.FC = () => {
   const [colorSwapLoading, setColorSwapLoading] = useState<boolean>(false);
 
   const handleImageSelect = (file: File) => {
+
+
     uploadImage(file)
       .then(image => {
         console.log("Image Recieved");
@@ -35,6 +38,10 @@ const App: React.FC = () => {
       .catch(error => {
         console.error('There was an error uploading the image', error);
       });
+  }
+
+  const handleImageDisplaySetting = (file: File) => {
+
   }
 
   const swapColors = (originalColor: string, newColor : string) : void => {
@@ -98,46 +105,68 @@ const App: React.FC = () => {
 
   return (
     <div style={styles.fullScreen}>
+      <div style={styles.splitScreen}>
+        <PanelGroup autoSaveId="FullScreen" direction="horizontal">
+          <Panel defaultSize={30} minSize={20}>
+              { !colorPaletteLoading &&
+              <div style={styles.paletteScreen}>
+                <div style={styles.paletteScreenTitleContainer}>
+                  Color Palette
+                </div>
 
-      { !colorPaletteLoading &&
-        <div style={styles.paletteScreen}>
-          <div style={styles.paletteScreenTitleContainer}>
-            Color Palette
-          </div>
+                <div style={styles.paletteScreenContentContainer}>
+                  {colorPalette?.map((color, index) => (
+                    <div key={index} style={styles.paletteBoxContainer}>
+                      <PaletteBox 
+                        paletteColor={color} 
+                        swapColors={swapColors}
+                        isSwapLoading={colorSwapLoading}
+                      />
+                    </div> 
+                  ))}
+                </div>
+              </div>
+            }
 
-          {colorPalette?.map((color, index) => (
-            <div key={index} style={styles.paletteBoxContainer}>
-              <PaletteBox 
-                paletteColor={color} 
-                swapColors={swapColors}
-                isSwapLoading={colorSwapLoading}
-              />
-            </div> 
-          ))}
-        </div>
-      }
+            { colorPaletteLoading &&
+            <div style={styles.paletteLoadingScreen}>
+                <div>Loading...</div>
+            </div>
+            }
+          </Panel>
+          
+          <PanelResizeHandle />
 
-      { colorPaletteLoading &&
-      <div style={styles.paletteLoadingScreen}>
-          <div>Loading...</div>
+          <Panel minSize={30}>
+            <div style={styles.imageScreen}>
+              <div style={styles.imageScreenTitleContainer}>
+                  Image
+              </div>
+
+              <div style={styles.imageScreenContainer}>
+                {imageSrc && 
+                <div style={styles.imageContainer}>
+                  <img src={`data:image/jpeg;base64,${imageSrc}`} alt="Pixel Art" style={styles.image}/>
+                </div>
+                }
+
+                <div style={styles.buttonContainer}>
+                  <ImportImageButton onImageSelect={handleImageSelect} />
+                  { imageSrc &&
+                  <ResetImageButton onResetClick={handleResetClick} />
+                  }
+                </div>
+              </div>
+
+            </div>
+          </Panel>
+        </PanelGroup>
       </div>
-      }
 
-      <div style={styles.imageScreen}>
-        {imageSrc && 
-        <div style={styles.imageContainer}>
-          <img src={`data:image/jpeg;base64,${imageSrc}`} alt="Pixel Art" style={styles.image}/>
+      <div style={styles.pixelSizeScreen}>
+        <div style={styles.pixelSizeScreenTitleContainer}>
+          Pixel Sizing
         </div>
-        }
-
-        <div style={styles.buttonContainer}>
-          <ImportImageButton onImageSelect={handleImageSelect} />
-          { imageSrc &&
-          <ResetImageButton onResetClick={handleResetClick} />
-          }
-
-        </div>
-
       </div>
     </div>
   );  
@@ -147,19 +176,14 @@ const styles: { [key: string]: React.CSSProperties } = {
   fullScreen: {
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100vh',
-    width: '100vw'
+  },
+  splitScreen:{
+    flex: 6,
   },
   paletteScreen:{
-    flex: 1,
-    display: 'flex',
-    flexWrap: 'wrap',
-    alignContent: 'flex-start',
-    border: '2px solid black',
+    flex: 2,
+    borderRight: '2px solid black',
     height: '100vh',
-    width: '100vw',
   },
   paletteScreenTitleContainer: {
     width: '100%',
@@ -168,6 +192,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontWeight: 'bold',
     padding: 10,
     borderBottom: '2px solid black',
+    whiteSpace: 'nowrap',
   },
   paletteLoadingScreen: {
     flex: 1,
@@ -178,24 +203,40 @@ const styles: { [key: string]: React.CSSProperties } = {
     height: '100vh',
     width: '100vw',
   },
+  paletteScreenContentContainer: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    alignContent: 'flex-start',
+    height: '100vh',
+    overflowY: 'auto',
+  },
   paletteBoxContainer: {
     padding: 10
   },
   imageScreen: {
-    flex: 3,
+    flex: 5,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
     height: '100vh',
-    width: '100vw'
   },
-  buttonContainer: {
+  imageScreenTitleContainer:{
+    width: '100%',
+    textAlign: 'center',
+    fontSize: 40,
+    fontWeight: 'bold',
+    padding: 10,
+    borderBottom: '2px solid black',
+    whiteSpace: 'nowrap',
+  },
+  imageScreenContainer: {
+    flex: 1,
     display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'column',
     justifyContent: 'center',
-    margin: 20,
+    alignItems: 'center',
+    height: '100%',
+    width: '100%'
   },
   imageContainer: {
     display: 'flex',
@@ -205,12 +246,40 @@ const styles: { [key: string]: React.CSSProperties } = {
     border: '3px solid black',
     width: '80%',
     height: '80%',
-    backgroundColor: 'lightgrey'
+    backgroundColor: 'lightgrey',
+    margin: 100,
   },
   image: {
-    height: '100%',
-    width: 'auto',
+    flex: 1,
+    maxHeight: '100%',
+    maxWidth: '100%',
+    objectFit: 'contain',
     imageRendering: 'pixelated',
+  },
+  buttonContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 20,
+  },
+  pixelSizeScreen:{
+    flex: 1,
+    display: 'flex',
+    flexWrap: 'wrap',
+    alignContent: 'flex-start',
+    borderLeft: '2px solid black',
+    height: '100vh',
+    width: '100vw',
+  },
+  pixelSizeScreenTitleContainer:{
+    width: '100%',
+    textAlign: 'center',
+    fontSize: 40,
+    fontWeight: 'bold',
+    padding: 10,
+    borderBottom: '2px solid black',
+    whiteSpace: 'nowrap',
   },
 };
 
