@@ -10,6 +10,7 @@ import ResetImageButton from './components/ResetImageButton';
 import { Palette } from './models/PaletteModels';
 import { parsePaletteDetails } from './models/PaletteModels';
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+import PixelSizeBox from './components/PixelSizeBox';
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
@@ -167,6 +168,9 @@ const App: React.FC = () => {
         <div style={styles.pixelSizeScreenTitleContainer}>
           Pixel Sizing
         </div>
+        <div style={styles.pixelSizeScreenContent}>
+          <PixelSizeBox sizeSuggestions={[]} isSwapLoading={false}/>
+        </div>
       </div>
     </div>
   );  
@@ -265,12 +269,10 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   pixelSizeScreen:{
     flex: 1,
-    display: 'flex',
-    flexWrap: 'wrap',
-    alignContent: 'flex-start',
     borderLeft: '2px solid black',
-    height: '100vh',
-    width: '100vw',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
   },
   pixelSizeScreenTitleContainer:{
     width: '100%',
@@ -281,6 +283,12 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderBottom: '2px solid black',
     whiteSpace: 'nowrap',
   },
+  pixelSizeScreenContent: {
+    display: 'flex',
+    width: '100%',
+    alignContent: 'flex-start',
+    justifyContent: 'center',
+  }
 };
 
 export default App;

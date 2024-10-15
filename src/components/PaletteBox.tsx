@@ -105,7 +105,9 @@ const styles: { [key: string]: React.CSSProperties} = {
         width: '50%',
     },
     bottomSectionContainer: {
-        border: '1px solid black'
+        border: '1px solid black',
+        maxHeight: 275,
+        overflowY: 'auto'
     },
     colorOptionContainer: {
         display: 'flex',
