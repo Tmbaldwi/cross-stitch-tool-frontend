@@ -19,19 +19,33 @@ const PixelSizeBox: React.FC<PixelSizeBoxProps> = () => {
     const [isChecked, setIsChecked] = useState(true);
     const [currentPixelSize, setCurrentPixelSize] = useState("10")
     const [proposedPixelSize, setProposedPixelSize] = useState("")
+    
+    const[testPixelOptions, setTestPixelOptions] = useState([[16,830], [32, 164], [48, 98], [64, 41], [80,20]])
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setProposedPixelSize(e.target.value); // Update the state with the new input
+        setProposedPixelSize(e.target.value);
     };
+
+    const handleResizeClick = () => {
+        setCurrentPixelSize(proposedPixelSize)
+        // TODO perform resize
+    }
 
     return(
         <div style={styles.outerContainer}>
             <div style={styles.container}>
                 <div style={styles.titleContainer}>
-                    Suggested Sizes
+                    Suggested Sizes:
                 </div>
                 <div style={styles.contentContainer}>
-                    content
+                    <div style={styles.pixelSizeOptionHeader}>
+                        Occurences | Size
+                    </div>
+                    {testPixelOptions?.map((sizePair, index) => (
+                        <div key={index} style={styles.pixelSizeOption}>
+                            {sizePair[1] + " | " + sizePair[0] + " x " + sizePair[0]}
+                        </div> 
+                    ))}
                 </div>
                 <div style={styles.currentPixelSizeContainer}>
                     <div style={styles.currentPixelSizeTitle}>
@@ -42,7 +56,7 @@ const PixelSizeBox: React.FC<PixelSizeBoxProps> = () => {
                     </div>
                 </div>
                 <div style={styles.pixelSizeInputContainer}>
-                    <div style={styles.pixelSizeInputTextContainer}>
+                    <div style={styles.pixelSizeInputText}>
                         Set Pixel Size:
                     </div>
                     <div style={styles.pixelSizeInputBox}>
@@ -51,11 +65,14 @@ const PixelSizeBox: React.FC<PixelSizeBoxProps> = () => {
                             placeholder={currentPixelSize}
                             value={proposedPixelSize}
                             onChange={handleInputChange}
-                        /> x {proposedPixelSize}
+                        />
                     </div>
                 </div>
             </div>
-            <button style={styles.button}>
+            <button 
+                style={styles.button}
+                onClick={handleResizeClick}
+            >
                 Resize
             </button>
         </div>
@@ -64,10 +81,10 @@ const PixelSizeBox: React.FC<PixelSizeBoxProps> = () => {
 
 const styles: { [key: string]: React.CSSProperties} = {
     outerContainer: {
-        width: '100%',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        minWidth: 300,
     },
     container: {
         display: 'flex',
@@ -76,70 +93,84 @@ const styles: { [key: string]: React.CSSProperties} = {
         border: '2px solid black',
         margin: 20,
         backgroundColor: 'lightgrey',
+        width: '100%',
     },
     titleContainer:{
-        alignSelf: 'stretch',
+        width: '100%',
         textAlign: 'center',
         fontSize: 20,
         fontWeight: 'bold',
         padding: 10,
-        borderBottom: '2px solid black',
+        borderBottom: '3px dashed black',
         whiteSpace: 'nowrap',
+        boxSizing: 'border-box',
     },
     contentContainer:{
+        width: '100%',
         display: 'flex',
         flexDirection: 'column',
-        alignSelf: 'stretch',
+        alignItems: 'center',
+        boxSizing: 'border-box',
         padding: 10,
+    },
+    pixelSizeOptionHeader: {
+        fontWeight: 'bold',
+        textDecoration: 'underline'
+    },
+    pixelSizeOption:{
+        padding: 5
     },
     currentPixelSizeContainer:{
         display: 'flex',
+        textAlign: 'center',
         flexDirection: 'row',
-        alignSelf: 'stretch',
-        padding: 10,
+        width: '100%',
         borderTop: '2px solid black',
         justifyContent: 'center',
         alignItems: 'center',
     },
     currentPixelSizeTitle: {
-        flex: 1,
-        textAlign: 'right',
-        paddingRight: 10,
-        paddingLeft: 10,
+        flex: 3,
         whiteSpace: 'nowrap',
+        borderRight: '2px solid black',
+        fontWeight: 'bold',
+        padding: 10,
+        boxSizing: 'border-box',
     },
     currentPixelSizeDisplay: {
-        flex: 1,
-        textAlign: 'center',
-        paddingRight: 10,
+        flex: 2,
         whiteSpace: 'nowrap',
         fontWeight: 'bold',
+        padding: 10,
+        boxSizing: 'border-box',
     },
     pixelSizeInputContainer: {
         display: 'flex',
         flexDirection: 'row',
-        alignSelf: 'stretch',
-        padding: 10,
+        width: '100%',
+        textAlign: 'center',
         borderTop: '2px solid black',
         justifyContent: 'center',
         alignItems: 'center',
     },
-    pixelSizeInputTextContainer: {
-        flex: 1,
-        textAlign: 'center',
-        paddingRight: 10,
-        paddingLeft: 10,
+    pixelSizeInputText: {
+        flex: 3,
+        padding: 10,
         whiteSpace: 'nowrap',
-    },
-    pixelSizeInputBox: {
-        flex: 1,
-        whiteSpace: 'nowrap',
+        borderRight: '2px solid black',
         fontWeight: 'bold',
     },
+    pixelSizeInputBox: {
+        flex: 2,
+        display: 'flex',
+        whiteSpace: 'nowrap',
+        fontWeight: 'bold',
+        justifyContent: 'center',
+        padding: 10,
+        boxSizing: 'border-box',
+    },
     pixelSizeInput: {
-        marginLeft: 10,
-        minWidth: 25,
-        width: '50%',
+        width: 60,
         boxSizing: 'border-box',
         textAlign: 'center',
     },
