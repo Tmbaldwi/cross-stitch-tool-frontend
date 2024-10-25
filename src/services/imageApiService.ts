@@ -3,7 +3,7 @@ import { ColorPaletteResponse } from '../models/PaletteModels'
 
 const API_URL = 'http://localhost:8000/api/image/';
 
-export const uploadImage = async (imageFile: File): Promise<string> => {
+export const uploadImage = async (imageFile: File): Promise<{image: string, pixel_size_options: string[][]}> => {
     const payload = new FormData();
     payload.append('file', imageFile);
     
@@ -15,7 +15,7 @@ export const uploadImage = async (imageFile: File): Promise<string> => {
 
     console.log(response.data)
     
-    return response.data.image;
+    return response.data;
 };
 
 export const getColorPalette = async (): Promise<ColorPaletteResponse> => {

@@ -1,26 +1,26 @@
-import React, { useState } from 'react';
-import { MouseEvent } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
+import React, { useState, useEffect, CSSProperties } from 'react';
 
 interface PixelSizeBoxProps{
-    sizeSuggestions: string[][],
+    sizeSuggestions: string[][] | undefined,
     isSwapLoading: boolean,
 }
 
-const PixelSizeBox: React.FC<PixelSizeBoxProps> = () => {
-    const dispatch = useDispatch();
-
-    // global state vars
-    const { colorOptions: colorOptionsDict } = useSelector((state: RootState) => state.color);
-    const { colorSelection: colorSelectionDict } = useSelector((state: RootState) => state.color);
-
+const PixelSizeBox: React.FC<PixelSizeBoxProps> = ({ sizeSuggestions }) => {
     // local state vars
-    const [isChecked, setIsChecked] = useState(true);
-    const [currentPixelSize, setCurrentPixelSize] = useState("10")
-    const [proposedPixelSize, setProposedPixelSize] = useState("")
+    const [currentPixelSize, setCurrentPixelSize] = useState("?");
+    const [proposedPixelSize, setProposedPixelSize] = useState("");
+
+    useEffect(() => {
+        const isPopulated = sizeSuggestions != undefined && sizeSuggestions.length > 0 && sizeSuggestions[0].length > 0;
+
+        if(isPopulated){
+            setCurrentPixelSize(String(sizeSuggestions[0][0]));
+        }
+        else{
+            setCurrentPixelSize("?");
+        }
+    }, [sizeSuggestions])
     
-    const[testPixelOptions, setTestPixelOptions] = useState([[16,830], [32, 164], [48, 98], [64, 41], [80,20]])
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setProposedPixelSize(e.target.value);
@@ -38,12 +38,22 @@ const PixelSizeBox: React.FC<PixelSizeBoxProps> = () => {
                     Suggested Sizes:
                 </div>
                 <div style={styles.contentContainer}>
-                    <div style={styles.pixelSizeOptionHeader}>
-                        Occurences | Size
+                    <div style={styles.pixelSizeOptionHeaderContainer}>
+                        <div style={styles.pixelSizeOptionHeaderOccurrences}>
+                            Occurrences
+                        </div>
+                        <div style={styles.pixelSizeOptionHeaderSize}>
+                            Size
+                        </div>
                     </div>
-                    {testPixelOptions?.map((sizePair, index) => (
-                        <div key={index} style={styles.pixelSizeOption}>
-                            {sizePair[1] + " | " + sizePair[0] + " x " + sizePair[0]}
+                    {sizeSuggestions?.map((sizePair, index) => (
+                        <div key={index} style={getPixelOptionRowStyling(index)}>
+                            <div style={styles.pixelSizeOptionFrequencyDisplay}>
+                                {sizePair[1]}
+                            </div>
+                            <div style={styles.pixelSizeOpitonSizeSuggestionDisplay}>
+                                {sizePair[0] + " x " + sizePair[0]}
+                            </div>
                         </div> 
                     ))}
                 </div>
@@ -79,6 +89,15 @@ const PixelSizeBox: React.FC<PixelSizeBoxProps> = () => {
     );
 };
 
+const getPixelOptionRowStyling = (index: number): CSSProperties => ({
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+    textAlign: 'center',
+    ...(index !== 0 && { borderTop: '3px dotted black' }),
+});
+
+
 const styles: { [key: string]: React.CSSProperties} = {
     outerContainer: {
         display: 'flex',
@@ -113,12 +132,32 @@ const styles: { [key: string]: React.CSSProperties} = {
         boxSizing: 'border-box',
         padding: 10,
     },
-    pixelSizeOptionHeader: {
+    pixelSizeOptionHeaderContainer: {
         fontWeight: 'bold',
-        textDecoration: 'underline'
+        textDecoration: 'underline',
+        display: 'flex',
+        flexDirection: 'row',
+        width: '100%',
+        textAlign: 'center',
     },
-    pixelSizeOption:{
-        padding: 5
+    pixelSizeOptionHeaderOccurrences: {
+        flex: 1,
+        padding: 5,
+        borderRight: '2px solid black',
+    },
+    pixelSizeOptionHeaderSize: {
+        flex: 1,
+        padding: 5,
+    },
+    pixelSizeOptionFrequencyDisplay: {
+        flex: 1,
+        padding: 5,
+        borderRight: '2px solid black',
+    },
+    pixelSizeOpitonSizeSuggestionDisplay: {
+        flex: 1,
+        padding: 5,
+        fontWeight: 'bold',
     },
     currentPixelSizeContainer:{
         display: 'flex',
@@ -175,8 +214,13 @@ const styles: { [key: string]: React.CSSProperties} = {
         textAlign: 'center',
     },
     button: {
-        
-    }
+        padding: '10px 20px',
+        backgroundColor: '#007bff',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+      },
 }
 
 export default PixelSizeBox;

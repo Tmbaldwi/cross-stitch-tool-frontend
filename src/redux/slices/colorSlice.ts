@@ -11,7 +11,6 @@ const initialState: ColorState = {
     colorPalette: [],
     colorOptions: {},
     colorSelection: {},
-
 };
 
 const colorSlice = createSlice({
@@ -30,6 +29,9 @@ const colorSlice = createSlice({
                 // add to color options
                 //state.colorOptions[color] = ["#43A5BE", "#F5C26B", "#4FB06D", "#F07857", "#BF2C34"]; //TODO remove eventually
             });
+        },
+        clearColorPalette: (state) => {
+            state.colorPalette = [];
         },
         setColorOptions: (state, action: PayloadAction<Palette>) => {
             const palette: Palette = action.payload;
@@ -50,5 +52,5 @@ const colorSlice = createSlice({
     }
 })
 
-export const { setColorPalette, setColorOptions, setColorSelection, resetAllColorSelections } = colorSlice.actions;
+export const { setColorPalette, clearColorPalette, setColorOptions, setColorSelection, resetAllColorSelections } = colorSlice.actions;
 export default colorSlice.reducer;

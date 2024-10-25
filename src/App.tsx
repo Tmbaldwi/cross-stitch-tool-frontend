@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './redux/store';
-import { setImageSrc } from './redux/slices/imageSlice';
-import { setColorPalette, setColorOptions, resetAllColorSelections } from './redux/slices/colorSlice';
+import { setImageSrc, clearImageSrc, setImageSizeSuggestions, clearImageSizeSuggestions } from './redux/slices/imageSlice';
+import { setColorPalette, clearColorPalette, setColorOptions, resetAllColorSelections } from './redux/slices/colorSlice';
 import ImportImageButton from './components/ImportImageButton';
 import { uploadImage, getColorPalette, swapColorsService, resetImage } from './services/imageApiService';
 import PaletteBox from './components/PaletteBox';
@@ -17,21 +17,29 @@ const App: React.FC = () => {
 
   // global state vars
   const { imageSrc } = useSelector((state: RootState) => state.image);
+  const { imageSizeSuggestions } = useSelector((state: RootState) => state.image);
   const { colorPalette } = useSelector((state: RootState) => state.color);
 
   // local vars
   const [colorPaletteLoading, setColorPaletteLoading] = useState<boolean>(false);
   const [colorSwapLoading, setColorSwapLoading] = useState<boolean>(false);
 
+  const clearPage = () => {
+    dispatch(clearColorPalette());
+    dispatch(clearImageSrc());
+    dispatch(clearImageSizeSuggestions())
+  }
+
   const handleImageSelect = (file: File) => {
-
-
+    clearPage();
+    
     uploadImage(file)
-      .then(image => {
+      .then(imageDetails => {
         console.log("Image Recieved");
 
         // set image to screen
-        dispatch(setImageSrc(image));
+        dispatch(setImageSrc(imageDetails.image));
+        dispatch(setImageSizeSuggestions(imageDetails.pixel_size_options))
 
         // process palette
         handleGetPaletteRequest();
@@ -39,10 +47,6 @@ const App: React.FC = () => {
       .catch(error => {
         console.error('There was an error uploading the image', error);
       });
-  }
-
-  const handleImageDisplaySetting = (file: File) => {
-
   }
 
   const swapColors = (originalColor: string, newColor : string) : void => {
@@ -86,9 +90,6 @@ const App: React.FC = () => {
       });
   }
 
-  const clearColorPalette = () => {
-    dispatch(setColorPalette([]));
-  }
 
   const handleResetClick = () => {
     resetImage()
@@ -169,7 +170,7 @@ const App: React.FC = () => {
           Pixel Sizing
         </div>
         <div style={styles.pixelSizeScreenContent}>
-          <PixelSizeBox sizeSuggestions={[]} isSwapLoading={false}/>
+          <PixelSizeBox sizeSuggestions={imageSizeSuggestions} isSwapLoading={false}/>
         </div>
       </div>
     </div>
