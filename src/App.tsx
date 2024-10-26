@@ -4,7 +4,7 @@ import { RootState } from './redux/store';
 import { setImageSrc, clearImageSrc, setImageSizeSuggestions, clearImageSizeSuggestions } from './redux/slices/imageSlice';
 import { setColorPalette, clearColorPalette, setColorOptions, resetAllColorSelections } from './redux/slices/colorSlice';
 import ImportImageButton from './components/ImportImageButton';
-import { uploadImage, getColorPalette, swapColorsService, resetImage } from './services/imageApiService';
+import { uploadImage, getColorPalette, swapColorsService, resetImage, resizeImage } from './services/imageApiService';
 import PaletteBox from './components/PaletteBox';
 import ResetImageButton from './components/ResetImageButton';
 import { Palette } from './models/PaletteModels';
@@ -23,6 +23,32 @@ const App: React.FC = () => {
   // local vars
   const [colorPaletteLoading, setColorPaletteLoading] = useState<boolean>(false);
   const [colorSwapLoading, setColorSwapLoading] = useState<boolean>(false);
+  const [imageResizeLoading, setImageResizeLoading] = useState<boolean>(false);
+
+  const handleResizeRequest = (pixelSize: number) => {
+    setImageResizeLoading(true);
+
+    setColorPaletteLoading(true);
+    dispatch(clearColorPalette());
+
+    //TODO add image loading
+    dispatch(clearImageSrc());
+
+    resizeImage(pixelSize)
+      .then(image => {
+        // update image
+        dispatch(setImageSrc(image));
+        
+        // process palette
+        handleGetPaletteRequest();
+
+        setImageResizeLoading(false);
+      })
+      .catch(error => {
+        console.error('There was an error resizing the image', error);
+        setImageResizeLoading(false);
+      });
+  }
 
   const clearPage = () => {
     dispatch(clearColorPalette());
@@ -170,7 +196,11 @@ const App: React.FC = () => {
           Pixel Sizing
         </div>
         <div style={styles.pixelSizeScreenContent}>
-          <PixelSizeBox sizeSuggestions={imageSizeSuggestions} isSwapLoading={false}/>
+          <PixelSizeBox 
+            sizeSuggestions={imageSizeSuggestions} 
+            isSwapLoading={imageResizeLoading}
+            handleResizeRequest={handleResizeRequest}
+          />
         </div>
       </div>
     </div>

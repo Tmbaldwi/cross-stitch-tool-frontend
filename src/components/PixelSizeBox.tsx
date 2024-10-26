@@ -3,12 +3,14 @@ import React, { useState, useEffect, CSSProperties } from 'react';
 interface PixelSizeBoxProps{
     sizeSuggestions: string[][] | undefined,
     isSwapLoading: boolean,
+    handleResizeRequest: (pixelSize: number) => void;
 }
 
-const PixelSizeBox: React.FC<PixelSizeBoxProps> = ({ sizeSuggestions }) => {
+const PixelSizeBox: React.FC<PixelSizeBoxProps> = ({ sizeSuggestions, handleResizeRequest }) => {
     // local state vars
     const [currentPixelSize, setCurrentPixelSize] = useState("?");
     const [proposedPixelSize, setProposedPixelSize] = useState("");
+    const [isResizeDisabled, setIsResizeDisabled] = useState(false);
 
     useEffect(() => {
         const isPopulated = sizeSuggestions != undefined && sizeSuggestions.length > 0 && sizeSuggestions[0].length > 0;
@@ -20,15 +22,30 @@ const PixelSizeBox: React.FC<PixelSizeBoxProps> = ({ sizeSuggestions }) => {
             setCurrentPixelSize("?");
         }
     }, [sizeSuggestions])
+
+    // TODO add click-fill for size suggestions
     
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const parsedInput = parseInt(e.target.value, 10);
+
+        if( !isNaN(parsedInput) && Number.isInteger(parsedInput) && parsedInput > 0){
+            setIsResizeDisabled(false);
+        }
+        else{
+            setIsResizeDisabled(true);
+            // TODO add disabled styling for button
+        }
+
         setProposedPixelSize(e.target.value);
     };
 
     const handleResizeClick = () => {
         setCurrentPixelSize(proposedPixelSize)
-        // TODO perform resize
+
+        const newPixelSize = parseInt(proposedPixelSize, 10);
+        
+        handleResizeRequest(newPixelSize);
     }
 
     return(
@@ -75,6 +92,7 @@ const PixelSizeBox: React.FC<PixelSizeBoxProps> = ({ sizeSuggestions }) => {
                             placeholder={currentPixelSize}
                             value={proposedPixelSize}
                             onChange={handleInputChange}
+                            type='number'
                         />
                     </div>
                 </div>
@@ -82,6 +100,7 @@ const PixelSizeBox: React.FC<PixelSizeBoxProps> = ({ sizeSuggestions }) => {
             <button 
                 style={styles.button}
                 onClick={handleResizeClick}
+                disabled={isResizeDisabled}
             >
                 Resize
             </button>
@@ -220,7 +239,7 @@ const styles: { [key: string]: React.CSSProperties} = {
         border: 'none',
         borderRadius: '4px',
         cursor: 'pointer',
-      },
+    },
 }
 
 export default PixelSizeBox;
