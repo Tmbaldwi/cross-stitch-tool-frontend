@@ -1,4 +1,5 @@
-import React, { useState, useEffect, CSSProperties } from 'react';
+import React, { useState, useEffect, CSSProperties, MouseEvent } from 'react';
+import CommonButton from './Buttons/CommonButton';
 
 interface PixelSizeBoxProps{
     sizeSuggestions: string[][] | undefined,
@@ -23,7 +24,10 @@ const PixelSizeBox: React.FC<PixelSizeBoxProps> = ({ sizeSuggestions, handleResi
         }
     }, [sizeSuggestions])
 
-    // TODO add click-fill for size suggestions
+
+    const handleSizeSuggestionClick = (e: MouseEvent, newProposedSize: string): void => {
+        setProposedPixelSize(newProposedSize);
+    }
     
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,7 +72,9 @@ const PixelSizeBox: React.FC<PixelSizeBoxProps> = ({ sizeSuggestions, handleResi
                             <div style={styles.pixelSizeOptionFrequencyDisplay}>
                                 {sizePair[1]}
                             </div>
-                            <div style={styles.pixelSizeOpitonSizeSuggestionDisplay}>
+                            <div style={styles.pixelSizeOpitonSizeSuggestionDisplay}
+                                onClick={(event: MouseEvent) => handleSizeSuggestionClick(event, sizePair[0])}
+                            >
                                 {sizePair[0] + " x " + sizePair[0]}
                             </div>
                         </div> 
@@ -97,13 +103,12 @@ const PixelSizeBox: React.FC<PixelSizeBoxProps> = ({ sizeSuggestions, handleResi
                     </div>
                 </div>
             </div>
-            <button 
-                style={styles.button}
+            <CommonButton 
                 onClick={handleResizeClick}
                 disabled={isResizeDisabled}
             >
                 Resize
-            </button>
+            </CommonButton>
         </div>
     );
 };
@@ -231,14 +236,6 @@ const styles: { [key: string]: React.CSSProperties} = {
         width: 60,
         boxSizing: 'border-box',
         textAlign: 'center',
-    },
-    button: {
-        padding: '10px 20px',
-        backgroundColor: '#007bff',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '4px',
-        cursor: 'pointer',
     },
 }
 

@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { MouseEvent } from 'react';
+import React, { useState, MouseEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { setColorSelection } from '../redux/slices/colorSlice';

@@ -3,14 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './redux/store';
 import { setImageSrc, clearImageSrc, setImageSizeSuggestions, clearImageSizeSuggestions } from './redux/slices/imageSlice';
 import { setColorPalette, clearColorPalette, setColorOptions, resetAllColorSelections } from './redux/slices/colorSlice';
-import ImportImageButton from './components/ImportImageButton';
+import ImportImageButton from './components/Buttons/ImportImageButton';
 import { uploadImage, getColorPalette, swapColorsService, resetImage, resizeImage } from './services/imageApiService';
 import PaletteBox from './components/PaletteBox';
-import ResetImageButton from './components/ResetImageButton';
 import { Palette } from './models/PaletteModels';
 import { parsePaletteDetails } from './models/PaletteModels';
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import PixelSizeBox from './components/PixelSizeBox';
+import CommonButton from './components/Buttons/CommonButton';
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
@@ -181,7 +181,9 @@ const App: React.FC = () => {
                 <div style={styles.buttonContainer}>
                   <ImportImageButton onImageSelect={handleImageSelect} />
                   { imageSrc &&
-                  <ResetImageButton onResetClick={handleResetClick} />
+                  <CommonButton onClick={handleResetClick}>
+                    Reset
+                  </CommonButton>
                   }
                 </div>
               </div>
