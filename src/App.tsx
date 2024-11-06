@@ -273,7 +273,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     justifyContent: 'center',
     alignItems: 'center',
     height: '100%',
-    width: '100%'
+    width: '100%',
   },
   imageContainer: {
     display: 'flex',
@@ -284,7 +284,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: '80%',
     height: '80%',
     backgroundColor: 'lightgrey',
-    margin: 100,
   },
   image: {
     flex: 1,
