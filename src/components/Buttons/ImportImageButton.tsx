@@ -1,4 +1,5 @@
 import React, {useRef } from 'react';
+import CommonButton from './CommonButton';
 
 interface ImportImageButtonProps {
     onImageSelect: (file: File) => void;
@@ -20,9 +21,9 @@ const ImportImageButton: React.FC<ImportImageButtonProps> = ({ onImageSelect }) 
 
     return (
         <div style={styles.importButton}>
-            <button onClick={handleClick} style={styles.button}>
+            <CommonButton onClick={handleClick}>
                 Upload Image
-            </button>
+            </CommonButton>
             <input
                 type="file"
                 ref={fileInputRef}
@@ -37,14 +38,6 @@ const ImportImageButton: React.FC<ImportImageButtonProps> = ({ onImageSelect }) 
 const styles: { [key: string]: React.CSSProperties } = {
     importButton: {
         margin: 10,
-    },
-    button: {
-      padding: '10px 20px',
-      backgroundColor: '#007bff',
-      color: '#fff',
-      border: 'none',
-      borderRadius: '4px',
-      cursor: 'pointer',
     },
     input: {
       display: 'none',
