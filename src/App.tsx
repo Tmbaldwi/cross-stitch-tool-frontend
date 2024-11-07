@@ -11,6 +11,7 @@ import { parsePaletteDetails } from './models/PaletteModels';
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import PixelSizeBox from './components/PixelSizeBox';
 import CommonButton from './components/Buttons/CommonButton';
+import LoadingOverlay from './components/loadingOverlay';
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
@@ -136,12 +137,12 @@ const App: React.FC = () => {
       <div style={styles.splitScreen}>
         <PanelGroup autoSaveId="FullScreen" direction="horizontal">
           <Panel defaultSize={30} minSize={20}>
-              { !colorPaletteLoading &&
               <div style={styles.paletteScreen}>
                 <div style={styles.paletteScreenTitleContainer}>
                   Color Palette
                 </div>
 
+                <LoadingOverlay loading={colorSwapLoading}>
                 <div style={styles.paletteScreenContentContainer}>
                   {colorPalette?.map((color, index) => (
                     <div key={index} style={styles.paletteBoxContainer}>
@@ -153,14 +154,8 @@ const App: React.FC = () => {
                     </div> 
                   ))}
                 </div>
+                </LoadingOverlay>
               </div>
-            }
-
-            { colorPaletteLoading &&
-            <div style={styles.paletteLoadingScreen}>
-                <div>Loading...</div>
-            </div>
-            }
           </Panel>
           
           <PanelResizeHandle />

@@ -11,7 +11,7 @@ const PixelSizeBox: React.FC<PixelSizeBoxProps> = ({ sizeSuggestions, handleResi
     // local state vars
     const [currentPixelSize, setCurrentPixelSize] = useState("?");
     const [proposedPixelSize, setProposedPixelSize] = useState("");
-    const [isResizeDisabled, setIsResizeDisabled] = useState(false);
+    const [isResizeDisabled, setIsResizeDisabled] = useState(true);
 
     useEffect(() => {
         const isPopulated = sizeSuggestions != undefined && sizeSuggestions.length > 0 && sizeSuggestions[0].length > 0;
@@ -38,7 +38,6 @@ const PixelSizeBox: React.FC<PixelSizeBoxProps> = ({ sizeSuggestions, handleResi
         }
         else{
             setIsResizeDisabled(true);
-            // TODO add disabled styling for button
         }
 
         setProposedPixelSize(e.target.value);
