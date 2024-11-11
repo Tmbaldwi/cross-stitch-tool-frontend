@@ -25,15 +25,12 @@ const App: React.FC = () => {
   const [colorPaletteLoading, setColorPaletteLoading] = useState<boolean>(false);
   const [colorSwapLoading, setColorSwapLoading] = useState<boolean>(false);
   const [imageResizeLoading, setImageResizeLoading] = useState<boolean>(false);
+  const [imageLoading, setImageLoading] = useState<boolean>(false);
+  const [imageResetLoading, setImageResetLoading] = useState<boolean>(false);
+
 
   const handleResizeRequest = (pixelSize: number) => {
     setImageResizeLoading(true);
-
-    setColorPaletteLoading(true);
-    dispatch(clearColorPalette());
-
-    //TODO add image loading
-    dispatch(clearImageSrc());
 
     resizeImage(pixelSize)
       .then(image => {
@@ -59,6 +56,8 @@ const App: React.FC = () => {
 
   const handleImageSelect = (file: File) => {
     clearPage();
+
+    setImageLoading(true);
     
     uploadImage(file)
       .then(imageDetails => {
@@ -70,9 +69,12 @@ const App: React.FC = () => {
 
         // process palette
         handleGetPaletteRequest();
+
+        setImageLoading(false);
       })
       .catch(error => {
         console.error('There was an error uploading the image', error);
+        setImageLoading(false);
       });
   }
 
@@ -95,9 +97,6 @@ const App: React.FC = () => {
   const handleGetPaletteRequest = () => {
     setColorPaletteLoading(true);
 
-    // clear palette first
-    clearColorPalette();
-
     // get & set palette
     getColorPalette()
       .then(response => {
@@ -119,17 +118,31 @@ const App: React.FC = () => {
 
 
   const handleResetClick = () => {
+    setImageResetLoading(true);
+
     resetImage()
     .then(updatedImage => {
+
       // reset color selections
       dispatch(resetAllColorSelections());
 
       // set image to screen
       dispatch(setImageSrc(updatedImage));
+
+      setImageResetLoading(false);
     })
     .catch(error => {
       console.error('There was an error resetting the image', error);
+      setImageResetLoading(false);
     });
+  }
+
+  const isImageLoading = () => {
+    return imageLoading || imageResetLoading || imageResizeLoading || colorSwapLoading;
+  }
+
+  const isColorPaletteLoading = () => {
+    return colorPaletteLoading || colorSwapLoading || imageResizeLoading || imageLoading;
   }
 
   return (
@@ -142,7 +155,7 @@ const App: React.FC = () => {
                   Color Palette
                 </div>
 
-                <LoadingOverlay loading={colorSwapLoading}>
+                <LoadingOverlay loading={isColorPaletteLoading()}>
                 <div style={styles.paletteScreenContentContainer}>
                   {colorPalette?.map((color, index) => (
                     <div key={index} style={styles.paletteBoxContainer}>
@@ -167,11 +180,13 @@ const App: React.FC = () => {
               </div>
 
               <div style={styles.imageScreenContainer}>
-                {imageSrc && 
                 <div style={styles.imageContainer}>
-                  <img src={`data:image/jpeg;base64,${imageSrc}`} alt="Pixel Art" style={styles.image}/>
+                  <LoadingOverlay loading={isImageLoading()}>
+                    { imageSrc &&
+                      <img src={`data:image/jpeg;base64,${imageSrc}`} alt="Pixel Art" style={styles.image}/>
+                    }
+                  </LoadingOverlay>
                 </div>
-                }
 
                 <div style={styles.buttonContainer}>
                   <ImportImageButton onImageSelect={handleImageSelect} />
