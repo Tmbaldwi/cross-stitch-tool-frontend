@@ -3,18 +3,18 @@ import CommonButton from './Buttons/CommonButton';
 
 interface PixelSizeBoxProps{
     sizeSuggestions: string[][] | undefined,
-    isSwapLoading: boolean,
+    isPageLoading: boolean,
     handleResizeRequest: (pixelSize: number) => void;
 }
 
-const PixelSizeBox: React.FC<PixelSizeBoxProps> = ({ sizeSuggestions, handleResizeRequest }) => {
+const PixelSizeBox: React.FC<PixelSizeBoxProps> = ({ sizeSuggestions, isPageLoading, handleResizeRequest }) => {
     // local state vars
     const [currentPixelSize, setCurrentPixelSize] = useState("?");
     const [proposedPixelSize, setProposedPixelSize] = useState("");
-    const [isResizeDisabled, setIsResizeDisabled] = useState(true);
+    const [isInputInvalid, setIsInputInvalid] = useState(true);
 
     useEffect(() => {
-        const isPopulated = sizeSuggestions != undefined && sizeSuggestions.length > 0 && sizeSuggestions[0].length > 0;
+        const isPopulated = sizeSuggestions !== undefined && sizeSuggestions.length > 0 && sizeSuggestions[0].length > 0;
 
         if(isPopulated){
             setCurrentPixelSize(String(sizeSuggestions[0][0]));
@@ -34,10 +34,10 @@ const PixelSizeBox: React.FC<PixelSizeBoxProps> = ({ sizeSuggestions, handleResi
         const parsedInput = parseInt(e.target.value, 10);
 
         if( !isNaN(parsedInput) && Number.isInteger(parsedInput) && parsedInput > 0){
-            setIsResizeDisabled(false);
+            setIsInputInvalid(false);
         }
         else{
-            setIsResizeDisabled(true);
+            setIsInputInvalid(true);
         }
 
         setProposedPixelSize(e.target.value);
@@ -49,6 +49,10 @@ const PixelSizeBox: React.FC<PixelSizeBoxProps> = ({ sizeSuggestions, handleResi
         const newPixelSize = parseInt(proposedPixelSize, 10);
         
         handleResizeRequest(newPixelSize);
+    }
+
+    const isResizeDisabled = () => {
+        return isInputInvalid || isPageLoading;
     }
 
     return(
@@ -104,7 +108,7 @@ const PixelSizeBox: React.FC<PixelSizeBoxProps> = ({ sizeSuggestions, handleResi
             </div>
             <CommonButton 
                 onClick={handleResizeClick}
-                disabled={isResizeDisabled}
+                disabled={isResizeDisabled()}
             >
                 Resize
             </CommonButton>

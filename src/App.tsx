@@ -145,6 +145,10 @@ const App: React.FC = () => {
     return colorPaletteLoading || colorSwapLoading || imageResizeLoading || imageLoading;
   }
 
+  const isPageLoading = () => {
+    return isImageLoading() || isColorPaletteLoading();
+  }
+
   return (
     <div style={styles.fullScreen}>
       <div style={styles.splitScreen}>
@@ -210,7 +214,7 @@ const App: React.FC = () => {
         <div style={styles.pixelSizeScreenContent}>
           <PixelSizeBox 
             sizeSuggestions={imageSizeSuggestions} 
-            isSwapLoading={imageResizeLoading}
+            isPageLoading={isPageLoading()}
             handleResizeRequest={handleResizeRequest}
           />
         </div>

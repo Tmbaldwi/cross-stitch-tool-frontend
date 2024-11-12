@@ -25,6 +25,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     position: 'relative',
     display: 'flex',
     flex: 1,
+    maxWidth: '100%',
+    maxHeight: '100%'
   },
   overlay: {
     position: 'absolute',
