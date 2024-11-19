@@ -52,7 +52,7 @@ const PixelSizeBox: React.FC<PixelSizeBoxProps> = ({ sizeSuggestions, isPageLoad
     }
 
     const isResizeDisabled = () => {
-        return isInputInvalid || isPageLoading;
+        return isInputInvalid || isPageLoading || proposedPixelSize === currentPixelSize;
     }
 
     return(
@@ -98,7 +98,6 @@ const PixelSizeBox: React.FC<PixelSizeBoxProps> = ({ sizeSuggestions, isPageLoad
                     <div style={styles.pixelSizeInputBox}>
                         <input 
                             style={styles.pixelSizeInput}
-                            placeholder={currentPixelSize}
                             value={proposedPixelSize}
                             onChange={handleInputChange}
                             type='number'

@@ -146,7 +146,7 @@ const App: React.FC = () => {
   }
 
   const isPageLoading = () => {
-    return isImageLoading() || isColorPaletteLoading();
+    return isImageLoading() || isColorPaletteLoading() || imageSrc === undefined ;
   }
 
   return (
@@ -305,6 +305,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     maxWidth: '100%',
     objectFit: 'contain',
     imageRendering: 'pixelated',
+    padding: 20,
+    boxSizing: 'border-box',
   },
   buttonContainer: {
     display: 'flex',

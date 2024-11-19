@@ -1,7 +1,7 @@
 import React, { useState, MouseEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
-import { setColorSelection } from '../redux/slices/colorSlice';
+import { setColorSelection, setColorActive, setAllColorsInactive } from '../redux/slices/colorSlice';
 import { ColorOption } from '../models/PaletteModels';
 
 interface PaletteBoxProps{
@@ -21,16 +21,31 @@ const PaletteBox: React.FC<PaletteBoxProps> = ({ paletteColor, swapColors, isSwa
 
     // local state vars
     const [isChecked, setIsChecked] = useState(true);
+    const [isDefaultSelected, setIsDefaultSelected] = useState(true);
+    const [selectedIndex, setSelectedIndex] = useState(-2);
 
     const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setIsChecked(event.target.checked);
     }
 
-    const handleColorSelection = (e: MouseEvent, newColor: string): void => {
-        if(!isSwapLoading && colorSelection !== newColor){
+    const handleColorSelection = (e: MouseEvent, newColor: string, index: number): void => {
+        if(!isSwapLoading && selectedIndex !== index){
+            // deselect others
+            dispatch(setAllColorsInactive(paletteColor));
+
+            if(index === -1) {
+                setIsDefaultSelected(true);
+            }
+            else {
+                setIsDefaultSelected(false);
+                // select this one
+                dispatch(setColorActive({paletteColor: paletteColor, selectionIndex: index}));
+            }
+
             swapColors(paletteColor, newColor)
 
             dispatch(setColorSelection({paletteColor, newSelection: newColor}));
+            setSelectedIndex(index);
         }
     }
 
@@ -45,8 +60,8 @@ const PaletteBox: React.FC<PaletteBoxProps> = ({ paletteColor, swapColors, isSwa
                         style={styles.checkBox}
                     />
                 </div>
-                <div style={getColorPalette(paletteColor)}
-                    onClick={(event: MouseEvent) => handleColorSelection(event, paletteColor)}
+                <div style={getColorPalette(paletteColor, isDefaultSelected)}
+                    onClick={(event: MouseEvent) => handleColorSelection(event, paletteColor, -1)}
                 />
                 <div style={getColorPalette(colorSelection)}/>
             </div>
@@ -54,8 +69,8 @@ const PaletteBox: React.FC<PaletteBoxProps> = ({ paletteColor, swapColors, isSwa
 
             {colorOptions?.map((color, index) => (
                 <div key={index} 
-                    style={styles.colorOptionContainer} 
-                    onClick={(event: MouseEvent) => handleColorSelection(event, color.hexValue)}
+                    style={getColorOptionContainer(color.active)} 
+                    onClick={(event: MouseEvent) => handleColorSelection(event, color.hexValue, index)}
                 >
                     <div style={getColorOption(color.hexValue)}/>
                     <div style={styles.colorNameContainer}>
@@ -77,14 +92,23 @@ const getColorOption = (boxColor : string) => {
             };
 };
 
-const getColorPalette = (boxColor: string) => {
+const getColorPalette = (boxColor: string, active?: boolean) => {
     return {
         flex: 1,
         minWidth: 45,
         backgroundColor: boxColor,
-        border: '1px solid black',
+        border: active ? '2px solid red' : '1px solid black',
     };
 };
+
+const getColorOptionContainer = (active: boolean) => {
+    return {
+        border: active ? '2px solid red' : 'none', 
+        display: 'flex',
+        alignItems: 'center',
+        paddingRight: 10,
+    };
+}
 
 const styles: { [key: string]: React.CSSProperties} = {
     topSectionContainer: {
@@ -107,12 +131,6 @@ const styles: { [key: string]: React.CSSProperties} = {
         border: '1px solid black',
         maxHeight: 275,
         overflowY: 'auto'
-    },
-    colorOptionContainer: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingRight: 10,
     },
     colorNameContainer: {
         maxWidth: 135

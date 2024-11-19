@@ -49,8 +49,48 @@ const colorSlice = createSlice({
                 state.colorSelection[color] = color;
             })
         },
+        setColorActive: (state, action: PayloadAction<{ paletteColor: string; selectionIndex: number}>) => {
+            const { paletteColor, selectionIndex } = action.payload;
+
+            // Ensure colorOptions for the paletteColor exists
+            if (!state.colorOptions[paletteColor]) {
+                console.warn(`No color options found for palette color: ${paletteColor}`);
+                return;
+            }
+        
+            // Check if the selection index is within bounds
+            if (selectionIndex < 0 || selectionIndex >= state.colorOptions[paletteColor].length) {
+                console.warn(`Invalid selection index: ${selectionIndex} for palette color: ${paletteColor}`);
+                return;
+            }
+        
+            // Update the active state of the color option
+            state.colorOptions[paletteColor][selectionIndex].active = true;
+        },
+        setAllColorsInactive: (state, action: PayloadAction<string>) => {
+            const paletteColor: string = action.payload;
+
+            // Ensure colorOptions for the paletteColor exists
+            if (!state.colorOptions[paletteColor]) {
+                console.warn(`No color options found for palette color: ${paletteColor}`);
+                return;
+            }
+
+            state.colorOptions[paletteColor].forEach((color) => {
+                color.active = false;
+            });
+        }
     }
 })
 
-export const { setColorPalette, clearColorPalette, setColorOptions, setColorSelection, resetAllColorSelections } = colorSlice.actions;
+export const { 
+    setColorPalette, 
+    clearColorPalette, 
+    setColorOptions, 
+    setColorSelection, 
+    resetAllColorSelections, 
+    setColorActive, 
+    setAllColorsInactive 
+} = colorSlice.actions;
+
 export default colorSlice.reducer;

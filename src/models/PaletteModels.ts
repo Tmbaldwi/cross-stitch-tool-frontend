@@ -1,6 +1,7 @@
 export interface ColorOption {
     name: string;
     hexValue: string;
+    active: boolean;
 }
 
 export interface Palette {
