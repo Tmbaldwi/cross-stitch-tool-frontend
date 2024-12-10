@@ -1,46 +1,20 @@
-# Getting Started with Create React App
+# Overview
+The Cross Stitch Tool is a web application built in React/Typescript and Python. The Cross Stitch Tool serves to ease the process of translating pixel art images to the cross stitch/embroidery medium (https://en.wikipedia.org/wiki/Cross-stitch). To do so, the Cross Stitch Tool leverages a few different features.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Features
 
-## Available Scripts
+**Pixel Size Identification/Image Compression**
+To make operations on the image easier, the tool can identify and rank the most likely pixel sizes (with result likeliness proportional to how "noisy" an image is) with a custom corner-detection algorithm. The most likely pixel size is chosen by default, but users can test the other suggested sizes until the correct one is found.
 
-In the project directory, you can run:
+By compressing the image, the tool is able to "clean" the noise out of poorly compressed pixel art images.
 
-### `npm start`
+**Color Mapping**
+The tool can then identify the color palette of the image, and rank the real-life DMC thread colors in terms of "closeness" to the images. This allows you to easily identify and purchase the needed colors, instead of just guessing based on sight.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+**Color Swapping**
+To test how the image would look in real life, the user can swap the pixel art's colors with the DMC equivalent in real time!
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+# Whats next?
+This project is still IN PROGRESS, and will be updated overtime. In addition to fine-tuning the existing features to work even better with bad (or exceptionally "noisy" images) images and reducing user input, I plan to add features to aid in the actual creation of the cross stitch.
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+I will be adding any features that I find useful for this, and eventually upload it for use online!
